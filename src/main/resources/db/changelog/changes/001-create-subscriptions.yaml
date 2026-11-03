@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-subscriptions
+      author: vitzemtsov
+      changes:
+        - createTable:
+            tableName: subscriptions
+            columns:
+              - column:
+                  name: login
+                  type: varchar(100)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: subscription_type
+                  type: varchar(16)
+                  defaultValue: FREE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: true
+        - sql:
+            sql: |
+              ALTER TABLE subscriptions
+              ADD CONSTRAINT chk_subscription_type
+              CHECK (subscription_type IN ('FREE', 'PAID'))
+      rollback:
+        - dropTable:
+            tableName: subscriptions
